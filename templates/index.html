@@ -4,16 +4,15 @@
 <div class="container">
 {% for row in rows %}
   <div class="row">
-    <div class="col-md-4">1</div>
-    <div class="col-md-4">2</div>
-    <div class="col-md-4">3</div>
+    {% for line in row %}
+      {% if line == None %}
+        <div class="col-md-4"></div>
+      {% else %}
+        <div class="col-md-4 box"><span class="name">{{ line[0] }}</div><br><span class="value">{{ line[1] }}</span></div>
+      {% endif %}
+    {% endfor %}
   </div>
 {% endfor %}
-  <!--<div class="row">
-    <div class="col-*-*"></div>
-    <div class="col-*-*"></div>
-    <div class="col-*-*"></div>
-  </div> -->
 </div>
 
 {% endblock %}

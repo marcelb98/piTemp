@@ -7,7 +7,11 @@ app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+	rows = []
+	temp1 = ["Innen",20.1]
+	temp2 = ["Außen",2.3]
+	rows.append([temp1,temp2,None])
+	return render_template('index.html',rows=rows)
 
 @app.route('/static/<string:filename>')
 def staticfile(filename):
