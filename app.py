@@ -18,7 +18,7 @@ def staticfile(filename):
 	#return filename
 	return app.send_static_file(filename)
 
-@app.route('/test/<string:txt>/')
+@app.route('/listSensors')
 def test(txt):
 	return render_template('test.html',txt=txt)
 

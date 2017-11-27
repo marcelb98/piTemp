@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+
 def getSensors():
 	with open('/etc/piTemp/sensors.csv') as f:
 		config = f.readlines()
@@ -12,7 +14,16 @@ def getSensors():
 			sensor[1] = sensor[1].rstrip()
 			sensors.append(sensor)
 	return sensors
-		
+	
+def getHardwareSensors():
+	# Detect sensors which are actually connected
+	# RETURN: List of sensor-IDs [sensor1, sensor2, ...]
+	sensors = []
+	for subdir, dirs, files in os.walk('/sys/bus/w1/devices'):
+		for sensor in dirs:
+			if ( sensor != 'w1_bus_master1'):
+				sensors.append(sensor)
+	return sensors
 
 def getTemp(sensor):
 	return 42
