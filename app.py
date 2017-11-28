@@ -18,9 +18,18 @@ def staticfile(filename):
 	#return filename
 	return app.send_static_file(filename)
 
-@app.route('/listSensors')
-def test(txt):
-	return render_template('test.html',txt=txt)
+@app.route('/sensors')
+def test():
+	sensors = ["a","b"]
+	return render_template('sensors.html',sensors=sensors)
+
+@app.route('/configureSensor/<string:sensor>/<string:name>')
+def configureSensor(sensor,name):
+	# insert to db
+	if temp.configureSensor(sensor, name):
+		# redirect to /sensors
+	else:
+		return render_template('error.html',error="Couldn't register sensor...")
 
 if __name__ == "__main__":
 	app.run('0.0.0.0',port=8080)

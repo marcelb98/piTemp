@@ -3,14 +3,14 @@
 import psycopg2
 
 print('We need an postgresql-database...')
-dbname='temp'
-dbuser='temp'
-dbpass='temp'
-dbhost='localhost'
+dbname=input('Database: ')
+dbuser=input('Username: ')
+dbpass=input('Password: ')
+dbhost=input('Host: ')
 
 print('Connecting to database...')
 try:
-	connect_str = "dbname='"+dbname+"' user='"+dbuser"' host='"+dbhost+"' password='"+dbpass+"'"
+	connect_str = "dbname='"+dbname+"' user='"+dbuser+"' host='"+dbhost+"' password='"+dbpass+"'"
 	conn = psycopg2.connect(connect_str)
 	cursor = conn.cursor()
 except Exception as e:
@@ -19,6 +19,9 @@ except Exception as e:
 
 print('Setting up database...')
 # create table sensors
-cursor.execute("""CREATE TABLE sensors (sensor char(15), name char(40));""")
+cursor.execute("CREATE TABLE sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(40));")
 # create table temps
-cursor.execute("""CREATE TABLE temps (id SERIAL PRIMARY KEY, sensor char(15), value DECIMAL, time TIMESTAMP DEFAULT NOW() );""")
+cursor.execute('''CREATE TABLE temps (id SERIAL PRIMARY KEY, sensor CAHR(15) NOT NULL REFERENCES sensors (sensor),
+value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
+
+print("Finished.")

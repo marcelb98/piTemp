@@ -28,3 +28,9 @@ def getHardwareSensors():
 def getTemp(sensor):
 	return 42
 
+def configureSensor(sensor, name):
+	# Configure sensor
+	# create db-entry in table 'sensors'.
+
+	return True;
+
