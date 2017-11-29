@@ -17,6 +17,12 @@ except Exception as e:
 	print("There was an error while connecting to the database.")
 	sys.exit(1)
 
+# write database-settings
+config = dbhost+','+dbuser+','+dbpass+','+dbname
+f = open('~/.piTemp/db.conf','w')
+f.write(config)
+f.close()
+
 print('Setting up database...')
 # create table sensors
 cursor.execute("CREATE TABLE sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(40));")
@@ -24,4 +30,7 @@ cursor.execute("CREATE TABLE sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(
 cursor.execute('''CREATE TABLE temps (id SERIAL PRIMARY KEY, sensor CAHR(15) NOT NULL REFERENCES sensors (sensor),
 value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 
+
+conn.close()
+cursor.close()
 print("Finished.")
