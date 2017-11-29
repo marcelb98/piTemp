@@ -56,9 +56,16 @@ def getHardwareSensors():
 def getTemp(sensor):
 	return 42
 
-def configureSensor(sensor, name):
-	# Configure sensor
-	# create db-entry in table 'sensors'.
-
+def nameSensor(sensor, name):
+	# Configure or rename sensor
+	# create/update db-entry in table 'sensors'.
+	cursor.execute('SELECT count(name) FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
+	count = cursor.fetchall()[0][0]
+	if count > 0:
+		#we have to update
+		cur.execute('UPDATE sensors SET name = %s WHERE sensor = %s', (name,sensor))
+	else:
+		#we have to configure
+		cur.execute('INSERT INTO sensors (sensor,name) VALUES (%s, %s)', (sensor,name))
 	return True;
 

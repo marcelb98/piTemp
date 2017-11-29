@@ -19,15 +19,16 @@ def staticfile(filename):
 	return app.send_static_file(filename)
 
 @app.route('/sensors')
-def test():
+def sensors():
 	sensors = ["a","b"]
 	return render_template('sensors.html',sensors=sensors)
 
 @app.route('/configureSensor/<string:sensor>/<string:name>')
 def configureSensor(sensor,name):
 	# insert to db
-	if temp.configureSensor(sensor, name):
+	if temp.nameSensor(sensor, name):
 		# redirect to /sensors
+		return redirect(url_for('sensors'))
 	else:
 		return render_template('error.html',error="Couldn't register sensor...")
 
