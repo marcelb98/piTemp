@@ -2,6 +2,34 @@
 # -*- coding: utf-8 -*-
 
 import os
+import psycopg2
+
+#global vars
+conn = None
+cursor = None
+
+def setupDb():
+	global conn
+	global cursor
+
+	# get db-settings
+	config = None
+	with open('~/.piTemp/db.conf') as f:
+		config = f.read()
+	if config == None:
+		return False
+	config = config.split(',')
+	try:
+		connect_str = "dbname='"+config[3]+"' user='"+config[1]+"' host='"+config[0]+"' password='"+config[2]+"'"
+        	conn = psycopg2.connect(connect_str)
+        	cursor = conn.cursor()
+		return True
+	except Exception as e:
+		return False
+
+def closeDB():
+	cursor.close()
+	conn.close()
 
 def getSensors():
 	with open('/etc/piTemp/sensors.csv') as f:
