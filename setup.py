@@ -24,7 +24,7 @@ if os.path.exists('~/.piTemp') == False:
 	print("Creating config-dir ~/.piTemp ...")
 	os.mkdir(expanduser("~")+'/.piTemp')
 config = dbhost+','+dbuser+','+dbpass+','+dbname
-f = open('~/.piTemp/db.conf','w')
+f = open(expanduser("~")+'/.piTemp/db.conf','w')
 f.write(config)
 f.close()
 

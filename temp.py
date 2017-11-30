@@ -3,6 +3,7 @@
 
 import os
 import psycopg2
+from os.path import expanduser
 
 #global vars
 conn = None
@@ -14,7 +15,7 @@ def setupDb():
 
 	# get db-settings
 	config = None
-	with open('~/.piTemp/db.conf') as f:
+	with open(expanduser("~")+'/.piTemp/db.conf') as f:
 		config = f.read()
 	if config == None:
 		return False
