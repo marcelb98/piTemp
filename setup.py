@@ -2,6 +2,7 @@
 
 import os
 import psycopg2
+from os.path import expanduser
 
 print('We need an postgresql-database...')
 dbname=input('Database: ')
@@ -20,7 +21,8 @@ except Exception as e:
 
 # write database-settings
 if os.path.exists('~/.piTemp') == False:
-	os.mkdir('~/.piTemp')
+	print("Creating config-dir ~/.piTemp ...")
+	os.mkdir(expanduser("~")+'/.piTemp')
 config = dbhost+','+dbuser+','+dbpass+','+dbname
 f = open('~/.piTemp/db.conf','w')
 f.write(config)
