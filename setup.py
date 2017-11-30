@@ -32,7 +32,7 @@ print('Setting up database...')
 # create table sensors
 cursor.execute("CREATE TABLE IF NOT EXISTS sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(40));")
 # create table temps
-cursor.execute('''CREATE TABLE IF NO EXISTS temps (id SERIAL PRIMARY KEY, sensor CHAR(15) NOT NULL REFERENCES sensors (sensor),
+cursor.execute('''CREATE TABLE IF NOT EXISTS temps (id SERIAL PRIMARY KEY, sensor CHAR(15) NOT NULL REFERENCES sensors (sensor),
 value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 
 
