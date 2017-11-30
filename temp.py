@@ -32,15 +32,16 @@ def closeDB():
 	conn.close()
 
 def getSensors():
-	with open('/etc/piTemp/sensors.csv') as f:
-		config = f.readlines()
-	sensors = []
-	for sensor in config:
-		sensor = sensor.split(",")
-		if len(sensor) == 2:
-			sensor[0] = sensor[0].rstrip()
-			sensor[1] = sensor[1].rstrip()
-			sensors.append(sensor)
+	# get configured sensors (from db)
+	# RETURN: dictionary with sensor => name
+	sensors = {}
+
+	cursor.execute('SELECT sensor, name FROM sensors', (sensor))
+        result = cursor.fetchall()
+	for row in result:
+		sensors[ row[0] ] = row[1]
+
+	# do some great stuff
 	return sensors
 	
 def getHardwareSensors():
@@ -54,7 +55,31 @@ def getHardwareSensors():
 	return sensors
 
 def getTemp(sensor):
-	return 42
+	# get temp
+	# returns temp on success or False
+	temp = None
+	try:
+		f = open('/sys/bus/w1/devices/'+sensor+'/w1_slave', "r")
+		line = f.readline()
+		if re.match(r"([0-9a-f]{2} ){9}: crc=[0-9a-f]{2} YES", line):
+			line = f.readline()
+			m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
+			if m:
+				temp = str(float(m.group(2)) / 1000.0)
+		f.close()
+	except (IOError), e:
+		return False
+	if temp == None:
+		return False
+
+	# save temp
+	try:
+		cursor.execute('INSERT INTO temp (sensor, value, time) VALUES (%s, %f, %d)', (sensor, temp, time))
+	except Exception e:
+		return False
+
+	# return temp
+	return temp
 
 def nameSensor(sensor, name):
 	# Configure or rename sensor
@@ -63,9 +88,18 @@ def nameSensor(sensor, name):
 	count = cursor.fetchall()[0][0]
 	if count > 0:
 		#we have to update
-		cur.execute('UPDATE sensors SET name = %s WHERE sensor = %s', (name,sensor))
+		cursor.execute('UPDATE sensors SET name = %s WHERE sensor = %s', (name,sensor))
 	else:
 		#we have to configure
-		cur.execute('INSERT INTO sensors (sensor,name) VALUES (%s, %s)', (sensor,name))
-	return True;
+		cursor.execute('INSERT INTO sensors (sensor,name) VALUES (%s, %s)', (sensor,name))
+	return True
+
+def deleteSensor(sensor):
+	# Delete sensor and his data
+	# returns True or False
+	try:
+		cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor))
+		cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
+	except Exception e:
+		return False
 

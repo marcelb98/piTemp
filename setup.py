@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import os
 import psycopg2
 
 print('We need an postgresql-database...')
@@ -18,6 +19,8 @@ except Exception as e:
 	sys.exit(1)
 
 # write database-settings
+if os.path.exists('~/.piTemp') == False:
+	os.mkdir('~/.piTemp')
 config = dbhost+','+dbuser+','+dbpass+','+dbname
 f = open('~/.piTemp/db.conf','w')
 f.write(config)
