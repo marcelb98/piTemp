@@ -75,7 +75,7 @@ def getTemp(sensor):
 
 	# save temp
 	try:
-		cursor.execute('INSERT INTO temp (sensor, value, time) VALUES (%s, %f, %d)', (sensor, temp, time))
+		cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %f, %d)', (sensor, temp, time))
 	except Exception e:
 		return False
 

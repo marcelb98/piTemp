@@ -20,7 +20,7 @@ except Exception as e:
 	sys.exit(1)
 
 # write database-settings
-if os.path.exists('~/.piTemp') == False:
+if os.path.exists(expanduser("~")+'/.piTemp') == False:
 	print("Creating config-dir ~/.piTemp ...")
 	os.mkdir(expanduser("~")+'/.piTemp')
 config = dbhost+','+dbuser+','+dbpass+','+dbname
