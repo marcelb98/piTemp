@@ -43,8 +43,8 @@ def setupDb():
 	# get db-settings
 	try:
 		connect_str = "dbname='"+config['DB']['dbname']+"' user='"+config['DB']['user']+"' host='"+['DB']['host']+"' password='"+config['DB']['pass']+"'"
-        	conn = psycopg2.connect(connect_str)
-        	cursor = conn.cursor()
+		conn = psycopg2.connect(connect_str)
+		cursor = conn.cursor()
 		return True
 	except Exception as e:
 		return False
