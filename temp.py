@@ -59,7 +59,7 @@ def getSensors():
 	sensors = {}
 
 	cursor.execute('SELECT sensor, name FROM sensors')
-        result = cursor.fetchall()
+	result = cursor.fetchall()
 	for row in result:
 		sensors[ row[0] ] = row[1]
 
