@@ -88,7 +88,7 @@ def getTemp(sensor):
 			if m:
 				temp = float(m.group(2)) / 1000.0
 		f.close()
-	except (IOError), e:
+	except IOError as e:
 		return False
 	if temp == None:
 		return False
