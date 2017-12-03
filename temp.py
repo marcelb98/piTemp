@@ -41,12 +41,11 @@ def getSensors():
 	# RETURN: dictionary with sensor => name
 	sensors = {}
 
-	cursor.execute('SELECT sensor, name FROM sensors', (sensor))
+	cursor.execute('SELECT sensor, name FROM sensors')
         result = cursor.fetchall()
 	for row in result:
 		sensors[ row[0] ] = row[1]
 
-	# do some great stuff
 	return sensors
 	
 def getHardwareSensors():
@@ -60,7 +59,7 @@ def getHardwareSensors():
 	return sensors
 
 def getTemp(sensor):
-	# get temp, saves temp in db
+	# get temp (as float), saves temp in db
 	# returns temp on success or False
 	temp = None
 	try:
@@ -70,7 +69,7 @@ def getTemp(sensor):
 			line = f.readline()
 			m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
 			if m:
-				temp = str(float(m.group(2)) / 1000.0)
+				temp = float(m.group(2)) / 1000.0
 		f.close()
 	except (IOError), e:
 		return False

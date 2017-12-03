@@ -13,10 +13,33 @@ app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
 def index():
+	#get dictionary with sensors
+	sensors = temp.getSensors()
+
+	# DATA-Structure:
+	# rows = []
+	# temp1 = ["Temp1",13.37]
+	# temp2 = ["Temp2",3.14]
+	# rows.append([temp1,temp2,None])
+
 	rows = []
-	temp1 = ["Innen",20.1]
-	temp2 = ["Außen",2.3]
-	rows.append([temp1,temp2,None])
+	col = []
+	for sensor, name in d.items():
+		#get temp
+		temp = temp.getTemp(sensor)
+		col.append([name,temp])
+		#create new row, if 3rd col
+		if len(col) == 3:
+			rows.append(col)
+			col = []
+	if len(col) == 1:
+		col.append(None)
+		col.append(None)
+		rows.append(col)
+	elif len(col) == 2:
+		col.append(None)
+		rows.append(col)
+	
 	return render_template('index.html',rows=rows)
 
 @app.route('/sensors')
