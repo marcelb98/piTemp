@@ -96,7 +96,7 @@ def getTemp(sensor):
 	# save temp
 	try:
 		cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %f, %d)', (sensor, temp, time))
-	except Exception e:
+	except Exception as e:
 		return False
 
 	# return temp
@@ -121,6 +121,6 @@ def deleteSensor(sensor):
 	try:
 		cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor))
 		cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
-	except Exception e:
+	except Exception as e:
 		return False
 
