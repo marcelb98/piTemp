@@ -60,7 +60,7 @@ def getHardwareSensors():
 	return sensors
 
 def getTemp(sensor):
-	# get temp
+	# get temp, saves temp in db
 	# returns temp on success or False
 	temp = None
 	try:
