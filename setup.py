@@ -74,7 +74,7 @@ value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 conn.close()
 cursor.close()
 
-write config to file
+# write config to file
 with open(expanduser("~")+'/.piTemp/piTemp.ini', 'w') as configfile:
 	config.write(configfile)
 
