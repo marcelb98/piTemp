@@ -19,6 +19,7 @@
 
 import os
 import sys
+import temp
 
 #is configured?
 if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
