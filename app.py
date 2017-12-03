@@ -1,6 +1,12 @@
 #! /usr/bin/env python3
 
-# https://pythonspot.com/en/flask-web-app-with-python/
+import os
+import sys
+
+#is configured?
+if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
+	print("Please run setup.py!")
+	sys.exit(1)
 
 from flask import Flask, request, render_template
 app = Flask(__name__, static_url_path='/static')

@@ -1,9 +1,25 @@
 #! /usr/bin/env python3
 
 import os
+import sys
 import psycopg2
 from os.path import expanduser
+import configparser
 
+#is configured?
+if os.path.exists(expanduser("~")+'/.piTemp') == False:
+	print("Creating config-dir ~/.piTemp ...")
+	os.mkdir(expanduser("~")+'/.piTemp')
+if os.path.isfile(expanduser("~")+'/piTemp.ini') == False:
+	f = open(expanduser("~")+'/.piTemp/piTemp.ini', 'w')
+	f.write('')
+	f.close()
+
+#open config
+config = configparser.ConfigParser()
+config.read(expanduser("~")+'/.piTemp/piTemp.ini')
+
+#input
 print('We need an postgresql-database...')
 dbname=input('Database: ')
 dbuser=input('Username: ')
@@ -19,14 +35,16 @@ except Exception as e:
 	print("There was an error while connecting to the database.")
 	sys.exit(1)
 
-# write database-settings
-if os.path.exists(expanduser("~")+'/.piTemp') == False:
-	print("Creating config-dir ~/.piTemp ...")
-	os.mkdir(expanduser("~")+'/.piTemp')
-config = dbhost+','+dbuser+','+dbpass+','+dbname
-f = open(expanduser("~")+'/.piTemp/db.conf','w')
-f.write(config)
-f.close()
+# set database-settings in config
+if ('DB' in config) == False:
+	print('Creating DB-settings in config')
+	config.add_section('DB')
+else:
+	print('Updateing DB-settings in config')
+config['DB']['host'] = dbhost
+config['DB']['user'] = dbuser
+config['DB']['pass'] = dbpass
+config['DB']['dbname'] = dbname
 
 print('Setting up database...')
 # create table sensors
@@ -38,4 +56,9 @@ value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 
 conn.close()
 cursor.close()
+
+write config to file
+with open(expanduser("~")+'/.piTemp/piTemp.ini', 'w') as configfile:
+	config.write(configfile)
+
 print("Finished.")

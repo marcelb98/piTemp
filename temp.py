@@ -2,26 +2,30 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import psycopg2
 from os.path import expanduser
+import configparser
+
+#is configured?
+if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
+	print("Please run setup.py!")
+	sys.exit(1)
 
 #global vars
 conn = None
 cursor = None
+config = configparser.ConfigParser()
+config.read(expanduser("~")+'/piTemp.ini')
 
 def setupDb():
 	global conn
 	global cursor
+	global config
 
 	# get db-settings
-	config = None
-	with open(expanduser("~")+'/.piTemp/db.conf') as f:
-		config = f.read()
-	if config == None:
-		return False
-	config = config.split(',')
 	try:
-		connect_str = "dbname='"+config[3]+"' user='"+config[1]+"' host='"+config[0]+"' password='"+config[2]+"'"
+		connect_str = "dbname='"+config['DB']['dbname']+"' user='"+config['DB']['user']+"' host='"+['DB']['host']+"' password='"+config['DB']['pass']+"'"
         	conn = psycopg2.connect(connect_str)
         	cursor = conn.cursor()
 		return True
