@@ -25,17 +25,16 @@ from os.path import expanduser
 import configparser
 
 class piTemp:
-	#global vars
-	conn = None
-	cursor = None
-	config = configparser.ConfigParser()
-	config.read(expanduser("~")+'/piTemp.ini')
-	
+		
 	def __init__(self):
 		#is configured?
 		if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
 			print("Please run setup.py!")
 			sys.exit(1)
+		
+		# open config
+		self.config = configparser.ConfigParser()
+		self.config.read(expanduser("~")+'/piTemp.ini')
 	
 		# get db-settings
 		try:
@@ -45,6 +44,8 @@ class piTemp:
 			return None
 		except Exception as e:
 			print("Couldn't connect to DB...")
+			self.conn = None
+			self.cursor = None
 			return None
 
 	def closeDB(self):
