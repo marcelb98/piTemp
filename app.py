@@ -25,6 +25,8 @@ import temp
 if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
 	print("Please run setup.py!")
 	sys.exit(1)
+	
+temp = piTemp()
 
 from flask import Flask, request, render_template
 app = Flask(__name__, static_url_path='/static')
