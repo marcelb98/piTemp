@@ -32,6 +32,7 @@ app = Flask(__name__, static_url_path='/static')
 @app.route('/')
 def index():
 	#get dictionary with sensors
+	global temp
 	sensors = temp.getSensors()
 
 	# DATA-Structure:
@@ -62,6 +63,7 @@ def index():
 
 @app.route('/sensors')
 def sensors():
+	global temp
 	sensors = temp.getHardwareSensors()
 	configured_sensors = temp.getSensors()
 	return render_template('sensors.html',sensors=sensors,configured_sensors=configured_sensors)
@@ -76,6 +78,7 @@ def staticfile(filename):
 
 @app.route('/configureSensor/<string:sensor>/<string:name>')
 def configureSensor(sensor,name):
+	global temp
 	# insert to db
 	if temp.nameSensor(sensor, name):
 		# redirect to /sensors
@@ -85,6 +88,7 @@ def configureSensor(sensor,name):
 
 @app.route('/deleteSensor/<string:sensor>')
 def deleteSensor(sensor):
+	global temp
 	if temp.deleteSensor(sensor):
 		return redirect(url_for('sensors'))
 	else:

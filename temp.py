@@ -50,12 +50,16 @@ def setupDb():
 		return False
 
 def closeDB():
+	global cursor
+	global conn
 	cursor.close()
 	conn.close()
 
 def getSensors():
 	# get configured sensors (from db)
 	# RETURN: dictionary with sensor => name
+	global cursor
+	
 	sensors = {}
 
 	cursor.execute('SELECT sensor, name FROM sensors')
@@ -66,6 +70,8 @@ def getSensors():
 	return sensors
 	
 def getHardwareSensors():
+	global cursor
+	
 	# Detect sensors which are actually connected
 	# RETURN: List of sensor-IDs [sensor1, sensor2, ...]
 	sensors = []
@@ -78,6 +84,8 @@ def getHardwareSensors():
 def getTemp(sensor):
 	# get temp (as float), saves temp in db
 	# returns temp on success or False
+	global cursor
+	
 	temp = None
 	try:
 		f = open('/sys/bus/w1/devices/'+sensor+'/w1_slave', "r")
@@ -105,6 +113,8 @@ def getTemp(sensor):
 def nameSensor(sensor, name):
 	# Configure or rename sensor
 	# create/update db-entry in table 'sensors'.
+	global cursor
+	
 	cursor.execute('SELECT count(name) FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
 	count = cursor.fetchall()[0][0]
 	if count > 0:
@@ -118,6 +128,8 @@ def nameSensor(sensor, name):
 def deleteSensor(sensor):
 	# Delete sensor and his data
 	# returns True or False
+	global cursor
+	
 	try:
 		cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor))
 		cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
