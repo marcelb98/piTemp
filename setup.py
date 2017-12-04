@@ -47,6 +47,7 @@ print('Connecting to database...')
 try:
 	connect_str = "dbname='"+dbname+"' user='"+dbuser+"' host='"+dbhost+"' password='"+dbpass+"'"
 	conn = psycopg2.connect(connect_str)
+	conn.autocommit = True
 	cursor = conn.cursor()
 except Exception as e:
 	print("There was an error while connecting to the database.")
@@ -71,8 +72,9 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS temps (id SERIAL PRIMARY KEY, senso
 value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 
 
-conn.close()
 cursor.close()
+conn.close()
+#cursor.close()
 
 # write config to file
 with open(expanduser("~")+'/.piTemp/piTemp.ini', 'w') as configfile:

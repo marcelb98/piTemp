@@ -23,6 +23,8 @@ import sys
 import psycopg2
 from os.path import expanduser
 import configparser
+import re
+import time
 
 class piTemp:
 		
@@ -34,15 +36,17 @@ class piTemp:
 		
 		# open config
 		self.config = configparser.ConfigParser()
-		self.config.read(expanduser("~")+'/piTemp.ini')
+		self.config.read('/home/pi/.piTemp/piTemp.ini')
 	
 		# get db-settings
 		try:
 			connect_str = "dbname='"+self.config['DB']['dbname']+"' user='"+self.config['DB']['user']+"' host='"+self.config['DB']['host']+"' password='"+self.config['DB']['pass']+"'"
 			self.conn = psycopg2.connect(connect_str)
-			self.cursor = conn.cursor()
+			self.conn.autocommit = True
+			self.cursor = self.conn.cursor()
 			return None
 		except Exception as e:
+			print(e.message)
 			print("Couldn't connect to DB...")
 			self.conn = None
 			self.cursor = None
@@ -76,9 +80,9 @@ class piTemp:
 
 	def getTemp(self,sensor):
 		# get temp (as float), saves temp in db
-		# returns temp on success or False
-		
-		temp = None
+		# returns temp on success or -100 (IOError) or -99 (temp==None)
+
+		t = None
 		try:
 			f = open('/sys/bus/w1/devices/'+sensor+'/w1_slave', "r")
 			line = f.readline()
@@ -86,27 +90,28 @@ class piTemp:
 				line = f.readline()
 				m = re.match(r"([0-9a-f]{2} ){9}t=([+-]?[0-9]+)", line)
 				if m:
-					temp = float(m.group(2)) / 1000.0
+					t = float(m.group(2)) / 1000.0
 			f.close()
 		except IOError as e:
-			return False
-		if temp == None:
-			return False
+			return -100
+		if t == None:
+			return -99
 	
 		# save temp
 		try:
-			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %f, %d)', (sensor, temp, time))
+			time = str(int(time.time()))
+			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %f, %d)', (sensor, t, time,))
 		except Exception as e:
-			return False
+			print("Couldn't save temp to db")
 	
 		# return temp
-		return temp
+		return t
 
 	def nameSensor(self, sensor, name):
 		# Configure or rename sensor
 		# create/update db-entry in table 'sensors'.
 	
-		self.cursor.execute('SELECT count(name) FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
+		self.cursor.execute('SELECT count(name) FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
 		count = self.cursor.fetchall()[0][0]
 		if count > 0:
 			#we have to update
@@ -121,8 +126,8 @@ class piTemp:
 		# returns True or False
 		
 		try:
-			self.cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor))
-			self.cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor))
+			self.cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor,))
+			self.cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
 		except Exception as e:
 			return False
 

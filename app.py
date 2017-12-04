@@ -28,7 +28,7 @@ if os.path.isfile(os.path.expanduser("~")+'/.piTemp/piTemp.ini') == False:
 	
 temp = piTemp()
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
@@ -45,10 +45,10 @@ def index():
 
 	rows = []
 	col = []
-	for sensor, name in d.items():
+	for sensor, name in sensors.items():
 		#get temp
-		temp = temp.getTemp(sensor)
-		col.append([name,temp])
+		t = temp.getTemp(sensor)
+		col.append([name,t])
 		#create new row, if 3rd col
 		if len(col) == 3:
 			rows.append(col)

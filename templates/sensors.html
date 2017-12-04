@@ -19,6 +19,7 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>. -->
 {% block body %}
 
 <div class="container">
+	<a href="/">back</a>
   <div class="text-center"> 
 	<h1>Sensor management</h1>
   </div>
@@ -35,8 +36,8 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>. -->
 		<h2>Configured sensors</h2>
 		<ul>
                         {% for sensor in configured_sensors %}
-                                <li>{{ sensor }} <a title="rename" href="javascript:nameSensor('{{ sensor }}')">✎</a>
-					<a title="delete" href="javascript:delSensor('{{ sensor }}')"></a>🗑</li>
+                                <li>{{ sensor }} ({{ configured_sensors[sensor] }}) <a title="rename" href="javascript:nameSensor('{{ sensor }}')">✎</a>
+					<a title="delete" href="javascript:delSensor('{{ sensor }}')">🗑</a></li>
                         {% endfor %}
                 </ul>
 
@@ -50,8 +51,8 @@ function nameSensor(sensor){
 	window.location = "/configureSensor/"+sensor+"/"+name;
 }
 function delSensor(sensor){
-	var confirm = confirm("Do you really want to delete this sensor?");
-	if(confirm){
+	var conf = confirm("Do you really want to delete this sensor?");
+	if(conf){
 		window.location = "/deleteSensor/"+sensor
 	}	
 }
