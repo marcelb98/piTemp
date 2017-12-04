@@ -24,7 +24,7 @@ import psycopg2
 from os.path import expanduser
 import configparser
 
-class piTemp
+class piTemp:
 	#global vars
 	conn = None
 	cursor = None
@@ -42,9 +42,10 @@ class piTemp
 			connect_str = "dbname='"+self.config['DB']['dbname']+"' user='"+self.config['DB']['user']+"' host='"+self.config['DB']['host']+"' password='"+self.config['DB']['pass']+"'"
 			self.conn = psycopg2.connect(connect_str)
 			self.cursor = conn.cursor()
-			return True
+			return None
 		except Exception as e:
-			return False
+			print("Couldn't connect to DB...")
+			return None
 
 	def closeDB(self):
 		self.cursor.close()
