@@ -126,8 +126,9 @@ class piTemp:
 		# returns True or False
 		
 		try:
-			self.cursor.execute('DELETE FROM temp WHERE sensor = %s', (sensor,))
-			self.cursor.execute('DELETE FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
+			self.cursor.execute('DELETE FROM temps WHERE sensor = %s', (sensor,))
+			self.cursor.execute('DELETE FROM sensors WHERE sensor = %s', (sensor,))
+			return True
 		except Exception as e:
 			return False
 
