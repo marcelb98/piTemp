@@ -48,6 +48,8 @@ def index():
 	for sensor, name in sensors.items():
 		#get temp
 		t = temp.getTemp(sensor)
+		if t == -99 or t == -100:
+			t = "ERR"
 		col.append([name,t])
 		#create new row, if 3rd col
 		if len(col) == 3:
