@@ -48,7 +48,9 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>. -->
 <script type="text/javascript">
 function nameSensor(sensor){
 	var name = prompt("Name the sensor:");
-	window.location = "/configureSensor/"+sensor+"/"+name;
+	if(name != null){
+		window.location = "/configureSensor/"+sensor+"/"+name;
+	}
 }
 function delSensor(sensor){
 	var conf = confirm("Do you really want to delete this sensor?");
