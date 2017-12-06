@@ -24,6 +24,7 @@ import psycopg2
 from os.path import expanduser
 import configparser
 import re
+import datetime
 
 class piTemp:
 		
@@ -101,7 +102,8 @@ class piTemp:
 	def saveTemp(self,sensor,t):
 		# save temp to database
 		try:
-			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %s, now())', (sensor, t,))
+			time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %s, TIMESTAMP %s)', (sensor, t, time,))
 			return True
 		except Exception as e:
 			print("Couldn't save temp to db")
