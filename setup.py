@@ -58,7 +58,7 @@ if ('DB' in config) == False:
 	print('Creating DB-settings in config')
 	config.add_section('DB')
 else:
-	print('Updateing DB-settings in config')
+	print('Updating DB-settings in config')
 config['DB']['host'] = dbhost
 config['DB']['user'] = dbuser
 config['DB']['pass'] = dbpass
