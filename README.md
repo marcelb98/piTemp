@@ -7,3 +7,4 @@
 4. Run `sudo pip3 -r requirements.txt` to install all dependencies
 5. Create a database + user with access-rights to this db
 6. Run `./setup.py` to configure piTemp
+7. Setup cronjob for `./cron.py` to automatically save temperatures to db.
