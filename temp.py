@@ -24,7 +24,6 @@ import psycopg2
 from os.path import expanduser
 import configparser
 import re
-import time
 
 class piTemp:
 		
@@ -96,16 +95,18 @@ class piTemp:
 			return -100
 		if t == None:
 			return -99
-	
-		# save temp
+		
+		return t
+
+	def saveTemp(self,sensor,t):
+		# save temp to database
 		try:
-			time = str(int(time.time()))
-			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %f, %d)', (sensor, t, time,))
+			self.cursor.execute('INSERT INTO temps (sensor, value, time) VALUES (%s, %s, now())', (sensor, t,))
+			return True
 		except Exception as e:
 			print("Couldn't save temp to db")
-	
-		# return temp
-		return t
+			print(str(e))
+			return False
 
 	def nameSensor(self, sensor, name):
 		# Configure or rename sensor
