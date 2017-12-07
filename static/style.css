@@ -17,8 +17,13 @@ along with piTemp.  If not, see <http://www.gnu.org/licenses/>.*/
 
 .box {
 	background-color: red;
+	color: #fff;
 	border-radius: 5px;
 	margin: 5px;
+}
+.box:hover {
+	text-decoration: none;
+	color: #fff;
 }
 .box.name {
 
@@ -26,3 +31,5 @@ along with piTemp.  If not, see <http://www.gnu.org/licenses/>.*/
 .box.value {
 
 }
+
+.ct-label.ct-horizontal { position: relative; transform: rotate(45deg); transform-origin: left top; }

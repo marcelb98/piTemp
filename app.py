@@ -19,6 +19,7 @@
 
 import os
 import sys
+import datetime
 from temp import piTemp
 
 #is configured?
@@ -39,8 +40,8 @@ def index():
 
 	# DATA-Structure:
 	# rows = []
-	# temp1 = ["Temp1",13.37]
-	# temp2 = ["Temp2",3.14]
+	# temp1 = ["sensorID","Temp1",13.37]
+	# temp2 = ["sensorID","Temp2",3.14]
 	# rows.append([temp1,temp2,None])
 
 	rows = []
@@ -50,7 +51,7 @@ def index():
 		t = temp.getTemp(sensor)
 		if t == -99 or t == -100:
 			t = "ERR"
-		col.append([name,t])
+		col.append([sensor,name,t])
 		#create new row, if 3rd col
 		if len(col) == 3:
 			rows.append(col)
@@ -64,6 +65,26 @@ def index():
 		rows.append(col)
 	
 	return render_template('index.html',rows=rows)
+
+@app.route('/detail/<string:sensor>', defaults={'begin': None, 'end': None})
+@app.route('/detail/<string:sensor>/<string:begin>/<string:end>')
+def detail(sensor, begin, end):
+	sensor_name = temp.getSensorName(sensor)
+	if begin == None:
+		begin = datetime.datetime.now().strftime('%Y-%m-%d')+' 00:00:00'
+	if end == None:
+		end = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+	t = temp.getTemp(sensor)
+	if t == -99 or t == -100:
+		t = 'ERROR'
+			
+	tempHist = temp.getTempHist(sensor, begin, end)
+	if tempHist == False:
+		return render_template('error.html',error="Couldn't read temperature history...")
+	else:
+		labels = tempHist[0]
+		values = tempHist[1]
+		return render_template('detail.html', sensor=sensor, sensor_name=sensor_name, temp=t, begin=begin, end=end, labels=labels, values=values)
 
 @app.route('/sensors')
 def sensors():
