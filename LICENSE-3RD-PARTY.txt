@@ -12,6 +12,10 @@ License: MIT
 Copyright © Federico Zivolo and contributors
 License: MIT
 
+* CHARTIST.JS (http://gionkunz.github.io/chartist-js/)
+Copyright (c) 2013 Gion Kunz <gion.kunz@gmail.com>
+License: MIT
+
 piTemp also relies on 3rd-party-software which isn't distributed with the source code of piTemp:
 - Python (https://www.python.org/)
 - PostgreSQL (https://www.postgresql.org/)
