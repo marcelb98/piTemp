@@ -86,6 +86,18 @@ def detail(sensor, begin, end):
 		values = tempHist[1]
 		return render_template('detail.html', sensor=sensor, sensor_name=sensor_name, temp=t, begin=begin, end=end, labels=labels, values=values)
 
+
+@app.route('/chartDetail/<string:sensor>/<string:begin>/<string:end>')
+def chartDetail(sensor, begin, end)
+	sensor_name = temp.getSensorName(sensor)
+	tempHist = temp.getTempHist(sensor, begin, end)
+	if tempHist == False:
+                return render_template('error.html',error="Couldn't read temperature history...")
+        else:
+                labels = tempHist[0]
+                values = tempHist[1]
+                return render_template('chartDetail.html', sensor_name=sensor_name, temp=t, begin=begin, end=end, labels=labels, values=values)
+	
 @app.route('/sensors')
 def sensors():
 	global temp
