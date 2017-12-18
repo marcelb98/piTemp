@@ -1,0 +1,66 @@
+{# Copyright 2017 Marcel Beyer
+
+This file is part of piTemp.
+
+piTemp is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+piTemp is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with piTemp.  If not, see <http://www.gnu.org/licenses/>. #}
+
+{% extends "chart_template.html" %}
+{% block body %}
+
+<div class="container">
+<a href="/">back</a>
+<h1>{{ sensor_name }}</h1>
+<div class="container">
+  <div class="row">
+        <div class="col-md-4">
+				<b>Current temperature:</b> {{ temp }}&deg;C<br>
+				<br>
+				<b>Show data:</b><br>
+				Begin: <input type="datetime-local" id="beginInput" value="{{ begin }}"><br>
+				End: <input type="datetime-local" id="endInput" value="{{ end }}"><br>
+				<button type="button" class="btn btn-primary" onclick="refresh()">submit</button>
+        </div>
+        <div class="col-md-8">
+				<a href="/chartDetail/{{ sensor }}/{{ begin }}/{{ end }}"><div class="ct-chart ct-minor-seventh"></div></a>
+        </div>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript" >
+var data = {
+  labels: [{% for label in labels %}'{{label}}',{% endfor %}],
+  series: [
+    [{% for value in values %}{{value}},{% endfor %}]
+  ]
+};
+var options = {
+	axisX: {
+		offset: 50	
+	},
+}
+
+// Create a new line chart object where as first parameter we pass in a selector
+// that is resolving to our chart container element. The Second parameter
+// is the actual data object.
+new Chartist.Line('.ct-chart', data, options);
+
+function refresh(){
+	var begin = $('#beginInput').val();
+	var end = $('#endInput').val();
+	window.location = '/detail/{{ sensor }}/'+begin+'/'+end;
+}
+</script>
+
+{% endblock %}

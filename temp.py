@@ -77,9 +77,17 @@ class piTemp:
 				if ( sensor != 'w1_bus_master1'):
 					sensors.append(sensor)
 		return sensors
+		
+	def getSensorName(self, sensor):
+		# returns name of configured sensor or false
+		try:
+			self.cursor.execute('SELECT name FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
+			return self.cursor.fetchall()[0][0]
+		except Exception as e:
+			return False
 
 	def getTemp(self,sensor):
-		# get temp (as float), saves temp in db
+		# get temp (as float)
 		# returns temp on success or -100 (IOError) or -99 (temp==None)
 
 		t = None
@@ -98,6 +106,29 @@ class piTemp:
 			return -99
 		
 		return t
+		
+	def getTempHist(self,sensor,begin,end):
+		# returns saved temps from db or false
+		# temps are returned as dictionary of 2 dictionaries:
+		#	[ ["2017-01-01 13:38","2017-01-01 13:38"],[13, 37]]
+		# contains 2 temperatures.
+		
+		if not self.validateDateTime(begin) or not self.validateDateTime(end):
+			print('Incorrect datetime input!')
+			return False
+		times = []
+		values = []
+		try:
+			self.cursor.execute('SELECT time, value FROM temps WHERE sensor = %s AND time >= %s AND time <= %s', (sensor,begin,end,))
+			result = self.cursor.fetchall()
+			if result != None:			
+				for row in result:
+					times.append(row[0])
+					values.append(row[1])
+			return [times, values]
+		except ValueError as e:
+			print('tempHist Error: s='+sensor+' b='+begin+' e='+end)
+			return False
 
 	def saveTemp(self,sensor,t):
 		# save temp to database
@@ -135,3 +166,10 @@ class piTemp:
 		except Exception as e:
 			return False
 
+	def validateDateTime(self,date):
+		# returns True if date is in correct format: y-m-d h-m-s
+		try:
+			datetime.datetime.strptime(date,'%Y-%m-%d %H:%M:%S')
+			return True
+		except ValueError:
+			return False

@@ -1,4 +1,4 @@
-<!--Copyright 2017 Marcel Beyer
+{# Copyright 2017 Marcel Beyer
 
 This file is part of piTemp.
 
@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with piTemp.  If not, see <http://www.gnu.org/licenses/>. -->
+along with piTemp.  If not, see <http://www.gnu.org/licenses/>. #}
 
 {% extends "main_template.html" %}
 {% block body %}
@@ -26,7 +26,7 @@ along with piTemp.  If not, see <http://www.gnu.org/licenses/>. -->
       {% if line == None %}
         <div class="col-md-4"></div>
       {% else %}
-        <div class="col-md-4 box"><span class="name">{{ line[0] }}<br><span class="value">{{ line[1] }}&deg;C</span></div>
+        <a class="col-md-4 box" href="/detail/{{ line[0] }}"><span class="name">{{ line[1] }}<br><span class="value">{{ line[2] }}&deg;C</span></a>
       {% endif %}
     {% endfor %}
   </div>
