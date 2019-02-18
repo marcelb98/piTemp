@@ -35,6 +35,8 @@ for sensor, name in sensors.items():
 	t = temp.getTemp(sensor)
 	if temp.saveTemp(sensor,t):
 		print(sensor+' OK '+str(t))
+
+		temp.sendTemp(sensor,t)
 	else:
 		print(sensor+' ERR '+str(t))
 

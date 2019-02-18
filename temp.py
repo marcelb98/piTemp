@@ -17,7 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with piTemp.  If not, see <http://www.gnu.org/licenses/>.
-
+import hashlib
 import os
 import sys
 import psycopg2
@@ -25,6 +25,9 @@ from os.path import expanduser
 import configparser
 import re
 import datetime
+
+import requests
+
 
 class piTemp:
 		
@@ -37,6 +40,10 @@ class piTemp:
 		# open config
 		self.config = configparser.ConfigParser()
 		self.config.read('/home/pi/.piTemp/piTemp.ini')
+
+		# get tempSrvr
+		self.tempSrvr = self.config['tempSrvr']['url']
+		if self.tempSrvr == '': self.tempSrvr = None
 	
 		# get db-settings
 		try:
@@ -83,6 +90,14 @@ class piTemp:
 		try:
 			self.cursor.execute('SELECT name FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
 			return self.cursor.fetchall()[0][0]
+		except Exception as e:
+			return False
+
+	def getSensorAPI(self, sensor):
+		# returns (API-ID, API-Key) of configured sensor or false
+		try:
+			self.cursor.execute('SELECT apiid, apikey FROM sensors WHERE sensor = %s LIMIT 1', (sensor,))
+			return self.cursor.fetchall()[0]
 		except Exception as e:
 			return False
 
@@ -141,6 +156,28 @@ class piTemp:
 			print(str(e))
 			return False
 
+	def sendTemp(self,sensor,t):
+		# send temp to tempSrvr
+		## is server configured?
+		if self.tempSrvr is None:
+			return False
+
+		## api-key configured?
+		api = self.getSensorAPI(sensor)
+		(id, key) = api
+		if id is None or key is None:
+			return False
+
+		time = datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
+
+		signature = str(id)+str(time)+str(t)+key
+		signature = hashlib.sha256(signature.encode('utf-8')).hexdigest()
+
+		## send
+		r = requests.post(self.tempSrvr+'/api/v1/submit',
+						  data={'sensor':id,'time':time,'temp':str(t),'signature':signature})
+		return r.status_code == 200
+
 	def nameSensor(self, sensor, name):
 		# Configure or rename sensor
 		# create/update db-entry in table 'sensors'.
@@ -153,6 +190,22 @@ class piTemp:
 		else:
 			#we have to configure
 			self.cursor.execute('INSERT INTO sensors (sensor,name) VALUES (%s, %s)', (sensor,name))
+		return True
+
+	def apiSensor(self, sensor, api):
+		# Configure API for sensor
+		# create/update db-entry in table 'sensors'.
+
+		if api == '':
+			# delete API credentials
+			self.cursor.execute('UPDATE sensors SET apikey = %s WHERE sensor = %s', ('', sensor,))
+			self.cursor.execute('UPDATE sensors SET apiid = %s WHERE sensor = %s', ('', sensor,))
+		else:
+			# save API credentials
+			api = api.split('_')
+			self.cursor.execute('UPDATE sensors SET apikey = %s WHERE sensor = %s', (api[1], sensor,))
+			self.cursor.execute('UPDATE sensors SET apiid = %s WHERE sensor = %s', (api[0], sensor,))
+
 		return True
 
 	def deleteSensor(self, sensor):

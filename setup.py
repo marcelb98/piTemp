@@ -66,7 +66,7 @@ config['DB']['dbname'] = dbname
 
 print('Setting up database...')
 # create table sensors
-cursor.execute("CREATE TABLE IF NOT EXISTS sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(40));")
+cursor.execute("CREATE TABLE IF NOT EXISTS sensors (sensor CHAR(15) PRIMARY KEY, name VARCHAR(40), apiid INT, apikey TEXT);")
 # create table temps
 cursor.execute('''CREATE TABLE IF NOT EXISTS temps (id SERIAL PRIMARY KEY, sensor CHAR(15) NOT NULL REFERENCES sensors (sensor),
 value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
@@ -75,6 +75,12 @@ value DECIMAL, time TIMESTAMP DEFAULT NOW() );''')
 cursor.close()
 conn.close()
 #cursor.close()
+
+# connection to tempSrvr
+print("If you're hosting a tempSrvr (https://github.com/marcelb98/tempSrvr) we can send all temperatures to it.")
+print("Just provide the URL of the server (e.g. https://tempsrvr.example.org).")
+tempsrvr = input('tempSrvr-URL: ')
+config['tempSrvr']['url'] = tempsrvr
 
 # write config to file
 with open(expanduser("~")+'/.piTemp/piTemp.ini', 'w') as configfile:

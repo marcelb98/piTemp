@@ -37,6 +37,7 @@ along with piTemp.  If not, see <http://www.gnu.org/licenses/>. #}
 		<ul>
                         {% for sensor in configured_sensors %}
                                 <li>{{ sensor }} ({{ configured_sensors[sensor] }}) <a title="rename" href="javascript:nameSensor('{{ sensor }}')">✎</a>
+                                    <a title="set API credentials" href="javascript:apiSensor('{{ sensor }}')">&#128273;</a>
 					<a title="delete" href="javascript:delSensor('{{ sensor }}')">🗑</a></li>
                         {% endfor %}
                 </ul>
@@ -50,6 +51,12 @@ function nameSensor(sensor){
 	var name = prompt("Name the sensor:");
 	if(name != null){
 		window.location = "/configureSensor/"+sensor+"/"+name;
+	}
+}
+function apiSensor(sensor){
+	var api = prompt("Set API-Credentials: id_key");
+	if(name != null){
+		window.location = "/configureSensor/"+sensor+"/api/"+api;
 	}
 }
 function delSensor(sensor){

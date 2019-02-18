@@ -32,6 +32,10 @@ temp = piTemp()
 from flask import Flask, request, render_template, redirect, url_for
 app = Flask(__name__, static_url_path='/static')
 
+def get_app():
+	global app
+	return app
+
 @app.route('/')
 def index():
 	#get dictionary with sensors
@@ -122,6 +126,16 @@ def configureSensor(sensor,name):
 		return redirect(url_for('sensors'))
 	else:
 		return render_template('error.html',error="Couldn't register sensor...")
+
+@app.route('/configureSensor/<string:sensor>/api/<string:api>')
+def configureSensorAPI(sensor,api):
+	global temp
+	# insert to db
+	if temp.apiSensor(sensor, api):
+		# redirect to /sensors
+		return redirect(url_for('sensors'))
+	else:
+		return render_template('error.html',error="Couldn't register API for sensor...")
 
 @app.route('/deleteSensor/<string:sensor>')
 def deleteSensor(sensor):
